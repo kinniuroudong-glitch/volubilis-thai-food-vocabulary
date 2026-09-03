@@ -3,304 +3,87 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Volubilis 泰语美食词库</title>
+  <title>泰语美食词库</title>
   <style>
-    :root {
-      color-scheme: light;
-      --ink: #202b2b;
-      --muted: #6d7b79;
-      --line: #e3e9e5;
-      --paper: #fbfcf9;
-      --white: #ffffff;
-      --green: #0e6b5a;
-      --green-dark: #075345;
-      --green-soft: #e9f4ef;
-      --orange: #f28c55;
-      --orange-soft: #fff1e8;
-      --shadow: 0 18px 48px rgba(30, 65, 54, .10);
-    }
     * { box-sizing: border-box; }
-    body { margin: 0; background: linear-gradient(135deg, #f7faf6 0%, #fffaf4 100%); color: var(--ink); font: 15px/1.55 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-    .shell { max-width: 1180px; margin: 0 auto; padding: 24px clamp(16px, 4vw, 46px) 40px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; color: #fff; background: linear-gradient(135deg, var(--green) 0%, #1d8c72 100%); box-shadow: 0 8px 18px rgba(14, 107, 90, .22); font-size: 23px; }
-    .brand h1 { margin: 0; font-size: 20px; letter-spacing: -.02em; }
-    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
-    .voice-status { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.72); color: var(--muted); font-size: 12px; }
-    .voice-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
-    .hero { display: grid; grid-template-columns: 1.3fr .7fr; gap: 18px; margin-bottom: 18px; }
-    .hero-copy, .stat-card, .panel { border: 1px solid rgba(211, 224, 217, .88); background: rgba(255,255,255,.82); box-shadow: var(--shadow); }
-    .hero-copy { padding: clamp(22px, 4vw, 38px); border-radius: 24px; background: radial-gradient(circle at 90% 10%, rgba(242, 140, 85, .18), transparent 35%), linear-gradient(135deg, #f0f8f2, #fff); }
-    .eyebrow { margin: 0 0 9px; color: var(--green); font-size: 12px; font-weight: 700; letter-spacing: .08em; }
-    .hero h2 { max-width: 560px; margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.12; letter-spacing: -.045em; }
-    .hero-copy .sub { max-width: 600px; margin: 14px 0 0; color: var(--muted); }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-    .primary, .secondary, .icon-button, .tab { border: 0; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
-    .primary:hover, .secondary:hover, .icon-button:hover, .tab:hover { transform: translateY(-1px); }
-    .primary { padding: 11px 16px; border-radius: 12px; background: var(--green); color: #fff; box-shadow: 0 8px 18px rgba(14, 107, 90, .2); }
-    .primary:hover { background: var(--green-dark); }
-    .secondary { padding: 11px 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); }
-    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .stat-card { display: flex; flex-direction: column; justify-content: space-between; min-height: 132px; padding: 20px; border-radius: 20px; }
-    .stat-card .label { color: var(--muted); font-size: 12px; }
-    .stat-card strong { display: block; margin-top: 10px; color: var(--green); font-size: 34px; line-height: 1; }
-    .layout { display: grid; grid-template-columns: minmax(280px, .85fr) minmax(340px, 1.15fr); align-items: start; gap: 18px; }
-    .panel { border-radius: 20px; overflow: hidden; }
-    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 20px 14px; }
-    .panel-head h3 { margin: 0; font-size: 17px; }
-    .panel-head small { color: var(--muted); }
-    .tabs { display: flex; gap: 6px; padding: 0 20px 14px; border-bottom: 1px solid var(--line); }
-    .tab { padding: 7px 11px; border-radius: 9px; background: transparent; color: var(--muted); }
-    .tab.active { background: var(--green-soft); color: var(--green-dark); font-weight: 700; }
-    .search-box { display: flex; gap: 8px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
-    .search-box input { min-width: 0; flex: 1; padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px; outline: none; background: var(--paper); color: var(--ink); }
-    .search-box input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(14, 107, 90, .10); }
-    .search-box button { padding: 0 14px; border: 0; border-radius: 11px; background: var(--green); color: #fff; }
-    .results { max-height: 500px; overflow: auto; }
-    .result { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 13px 20px; border: 0; border-bottom: 1px solid #edf1ee; background: transparent; text-align: left; }
-    .result:hover, .result.selected { background: var(--green-soft); }
-    .result-thai { display: block; color: var(--green-dark); font-size: 17px; font-weight: 650; }
-    .result-zh { display: block; overflow: hidden; max-width: 235px; margin-top: 2px; color: var(--muted); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
-    .result-star { flex: 0 0 auto; color: #b5c2bd; font-size: 18px; }
-    .result-star.faved { color: var(--orange); }
-    .empty { padding: 38px 20px; color: var(--muted); text-align: center; }
-    .study-panel { padding-bottom: 18px; }
-    .study-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px 12px; }
-    .study-head h3 { margin: 0; font-size: 17px; }
-    .study-head small { color: var(--muted); }
-    .study-card { position: relative; min-height: 288px; margin: 0 20px; padding: 28px 25px; border-radius: 18px; background: linear-gradient(145deg, #0d6657 0%, #159178 100%); color: #fff; overflow: hidden; }
-    .study-card::after { content: ""; position: absolute; width: 210px; height: 210px; right: -75px; top: -75px; border: 1px solid rgba(255,255,255,.22); border-radius: 50%; box-shadow: 0 0 0 18px rgba(255,255,255,.04), 0 0 0 38px rgba(255,255,255,.035); }
-    .card-kicker { position: relative; z-index: 1; color: rgba(255,255,255,.7); font-size: 12px; }
-    .card-thai { position: relative; z-index: 1; margin: 38px 0 10px; font-size: clamp(31px, 5vw, 48px); line-height: 1.18; letter-spacing: .02em; word-break: break-word; }
-    .card-zh { position: relative; z-index: 1; min-height: 29px; color: #fff; font-size: 19px; }
-    .card-hint { position: relative; z-index: 1; margin-top: 11px; color: rgba(255,255,255,.72); font-size: 12px; }
-    .card-tools { position: absolute; z-index: 2; right: 17px; bottom: 15px; display: flex; gap: 8px; }
-    .icon-button { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 50%; background: rgba(255,255,255,.17); color: #fff; font-size: 17px; }
-    .icon-button.active { background: #fff; color: var(--orange); }
-    .study-controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 16px 20px 0; }
-    .control-group { display: flex; gap: 8px; }
-    .control-group button { min-width: 42px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
-    .control-group button:disabled { cursor: not-allowed; opacity: .45; }
-    .hint { color: var(--muted); font-size: 12px; }
-    .settings { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 16px 20px 0; padding: 12px 13px; border-radius: 12px; background: var(--orange-soft); color: #7a5138; font-size: 12px; }
-    .switch { position: relative; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; white-space: nowrap; }
-    .switch input { position: absolute; opacity: 0; }
-    .toggle { width: 34px; height: 20px; padding: 3px; border-radius: 99px; background: #c8d3cc; transition: background .2s; }
-    .toggle::after { display: block; width: 14px; height: 14px; border-radius: 50%; background: #fff; content: ""; transition: transform .2s; }
-    .switch input:checked + .toggle { background: var(--green); }
-    .switch input:checked + .toggle::after { transform: translateX(14px); }
-    .footer-note { margin-top: 17px; color: var(--muted); font-size: 12px; text-align: center; }
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-    @media (max-width: 760px) {
-      .topbar { align-items: flex-start; flex-direction: column; gap: 12px; }
-      .voice-status { align-self: flex-start; }
-      .hero, .layout { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: 1fr 1fr; }
-      .results { max-height: 330px; }
+    body {
+      margin: 0;
+      background: #fff;
+      color: #111;
+      font: 16px/1.5 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    main { max-width: 900px; margin: 0 auto; }
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 32px;
+      gap: 16px;
+      align-items: center;
+      min-height: 50px;
+      padding: 9px 14px;
+      border-bottom: 1px solid #eee;
+    }
+    .thai, .speak {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      padding: 0;
+      cursor: pointer;
+    }
+    .thai { text-align: left; word-break: break-word; }
+    .chinese { color: #444; word-break: break-word; }
+    .speak { font-size: 15px; text-align: center; }
+    @media (max-width: 560px) {
+      body { font-size: 15px; }
+      .row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 28px; gap: 9px; padding: 9px 10px; }
     }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="mark" aria-hidden="true">ก</div>
-        <div><h1>Volubilis 泰语美食词库</h1><p>只学泰语和地道中文翻译</p></div>
-      </div>
-      <div class="voice-status"><span class="voice-dot"></span><span id="voiceStatus">设备泰语发音已就绪</span></div>
-    </header>
-
-    <section class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow">THAI FOOD VOCABULARY</p>
-        <h2>把菜单上的泰语，<br>变成你会说的词。</h2>
-        <p class="sub">搜索一个词，听它怎么读；或者抽几张卡，边看边练。中文翻译来自整理后的泰语美食词库。</p>
-        <div class="hero-actions">
-          <button class="primary" id="practiceBtn">开始抽卡练习</button>
-          <button class="secondary" id="favoritesBtn">查看我的收藏</button>
-        </div>
-      </div>
-      <div class="stats">
-        <div class="stat-card"><span class="label">词库总量</span><strong id="totalCount">—</strong><span class="label">泰语美食词条</span></div>
-        <div class="stat-card"><span class="label">我的收藏</span><strong id="favoriteCount">0</strong><span class="label">保存在本设备</span></div>
-      </div>
-    </section>
-
-    <section class="layout">
-      <div class="panel">
-        <div class="panel-head"><h3>查词</h3><small id="resultCount">加载中…</small></div>
-        <div class="tabs" role="tablist"><button class="tab active" data-filter="all">全部词条</button><button class="tab" data-filter="favorites">收藏</button></div>
-        <form class="search-box" id="searchForm"><label class="sr-only" for="searchInput">搜索泰语或中文</label><input id="searchInput" type="search" placeholder="输入泰语或中文…" autocomplete="off"><button type="submit">搜索</button></form>
-        <div class="results" id="results" aria-live="polite"></div>
-      </div>
-
-      <div class="panel study-panel">
-        <div class="study-head"><h3 id="studyTitle">现在学习</h3><small id="progress">0 / 0</small></div>
-        <article class="study-card" id="studyCard">
-          <div class="card-kicker">泰语单词</div>
-          <div class="card-thai" id="cardThai">准备好了</div>
-          <div class="card-zh" id="cardZh">点击“播放”听发音</div>
-          <div class="card-hint" id="cardHint">先猜中文，再点眼睛查看答案</div>
-          <div class="card-tools"><button class="icon-button" id="speakBtn" title="播放泰语发音" aria-label="播放泰语发音">🔊</button><button class="icon-button" id="favoriteBtn" title="收藏" aria-label="收藏">☆</button><button class="icon-button" id="revealBtn" title="显示或隐藏中文" aria-label="显示或隐藏中文">◉</button></div>
-        </article>
-        <div class="study-controls"><span class="hint">切换卡片会自动发音</span><div class="control-group"><button id="prevBtn" aria-label="上一张">←</button><button id="nextBtn" aria-label="下一张">→</button></div></div>
-        <div class="settings"><span>自动播放泰语读音</span><label class="switch"><span class="sr-only">自动发音</span><input id="autoSpeak" type="checkbox" checked><span class="toggle" aria-hidden="true"></span></label></div>
-      </div>
-    </section>
-    <p class="footer-note">发音使用你当前设备的泰语语音引擎；收藏和设置保存在本地。</p>
-  </main>
-
+  <main id="list"></main>
   <script>
-    (() => {
-      const $ = (id) => document.getElementById(id);
-      const state = { allWords: [], catalog: null, totalCount: 0, visibleWords: [], deck: [], index: 0, showTranslation: false, filter: "all", favorites: new Set(JSON.parse(localStorage.getItem("volubilis-favorites") || "[]")), autoSpeak: localStorage.getItem("volubilis-auto-speak") !== "false", userInteracted: false };
-      let requestId = 0;
-      const pending = new Map();
-      let voices = [];
+    const speak = (text) => {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "th-TH";
+      const voice = window.speechSynthesis.getVoices().find((item) => item.lang.toLowerCase().startsWith("th"));
+      if (voice) utterance.voice = voice;
+      window.speechSynthesis.speak(utterance);
+    };
 
-      function saveState() {
-        localStorage.setItem("volubilis-favorites", JSON.stringify([...state.favorites]));
-        localStorage.setItem("volubilis-auto-speak", String(state.autoSpeak));
-        try { window.openai?.setWidgetState?.({ favorites: [...state.favorites], autoSpeak: state.autoSpeak }); } catch (_) {}
-      }
-      function selected() { return state.deck[state.index] || null; }
-      function isFavorite(word) { return Boolean(word && state.favorites.has(word.id)); }
-      function setStatus(text) { $("voiceStatus").textContent = text; }
-      function updateStats() { $("totalCount").textContent = (state.totalCount || state.allWords.length).toLocaleString("zh-CN"); $("favoriteCount").textContent = state.favorites.size.toLocaleString("zh-CN"); }
-      function extractData(result) { return result?.structuredContent || result?.result?.structuredContent || result?.data || result || {}; }
+    fetch("words.json")
+      .then((response) => response.json())
+      .then((words) => {
+        const fragment = document.createDocumentFragment();
+        for (const word of words) {
+          const row = document.createElement("div");
+          row.className = "row";
 
-      function sendBridge(method, params) {
-        return new Promise((resolve, reject) => {
-          const id = `volubilis-${++requestId}`;
-          pending.set(id, { resolve, reject });
-          window.parent.postMessage({ jsonrpc: "2.0", id, method, params }, "*");
-          setTimeout(() => { if (pending.has(id)) { pending.delete(id); reject(new Error("请求超时")); } }, 15000);
-        });
-      }
-      window.addEventListener("message", (event) => {
-        const message = event.data;
-        if (!message || message.jsonrpc !== "2.0") return;
-        const item = pending.get(message.id);
-        if (!item) return;
-        pending.delete(message.id);
-        if (message.error) item.reject(new Error(message.error.message || "调用失败")); else item.resolve(message.result);
+          const thai = document.createElement("button");
+          thai.className = "thai";
+          thai.type = "button";
+          thai.textContent = word.thai;
+          thai.setAttribute("aria-label", `朗读 ${word.thai}`);
+          thai.addEventListener("click", () => speak(word.thai));
+
+          const chinese = document.createElement("span");
+          chinese.className = "chinese";
+          chinese.textContent = word.chinese;
+
+          const audio = document.createElement("button");
+          audio.className = "speak";
+          audio.type = "button";
+          audio.textContent = "🔊";
+          audio.setAttribute("aria-label", `朗读 ${word.thai}`);
+          audio.addEventListener("click", () => speak(word.thai));
+
+          row.append(thai, chinese, audio);
+          fragment.append(row);
+        }
+        document.querySelector("#list").append(fragment);
       });
-
-      async function getLocalCatalog() {
-        if (Array.isArray(state.catalog)) return state.catalog;
-        const response = await fetch(new URL("words.json", document.baseURI));
-        if (!response.ok) throw new Error("词库加载失败");
-        state.catalog = await response.json();
-        state.totalCount = state.catalog.length;
-        return state.catalog;
-      }
-      async function localToolResult(name, args) {
-        const catalog = await getLocalCatalog();
-        if (name === "search") {
-          const q = String(args.query || "").trim().toLocaleLowerCase();
-          const matches = q ? catalog.filter((word) => word.thai.toLocaleLowerCase().includes(q) || word.chinese.toLocaleLowerCase().includes(q)).slice(0, 50) : catalog.slice(0, 50);
-          return { query: args.query || "", count: matches.length, words: matches };
-        }
-        if (name === "draw_cards") {
-          const copy = [...catalog];
-          for (let i = copy.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [copy[i], copy[j]] = [copy[j], copy[i]]; }
-          return { mode: "practice", query: "", count: catalog.length, words: copy.slice(0, Math.min(10, Math.max(1, Number(args.count || 5)))) };
-        }
-        return { mode: "dictionary", query: "", count: catalog.length, words: catalog.slice(0, 12) };
-      }
-      async function callTool(name, args) {
-        if (typeof window.openai?.callTool === "function") return window.openai.callTool(name, args);
-        if (window.parent !== window) return sendBridge("tools/call", { name, arguments: args });
-        try {
-          const endpoint = name === "search" ? `/api/search?query=${encodeURIComponent(args.query)}` : `/api/deck?count=${args.count || 12}`;
-          const response = await fetch(endpoint);
-          if (!response.ok) throw new Error("接口不可用");
-          return response.json();
-        } catch (_) {
-          return localToolResult(name, args);
-        }
-      }
-
-      function loadVoices() {
-        if (!("speechSynthesis" in window)) { setStatus("当前设备不支持自动发音"); return; }
-        voices = window.speechSynthesis.getVoices();
-        const thaiVoice = voices.find((voice) => /^th(-|_)/i.test(voice.lang));
-        setStatus(thaiVoice ? "设备泰语发音已就绪" : "将使用设备默认泰语发音");
-      }
-      function speak(thai) {
-        if (!("speechSynthesis" in window) || !thai) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(thai);
-        utterance.lang = "th-TH";
-        utterance.rate = 0.82;
-        utterance.pitch = 1;
-        utterance.voice = voices.find((voice) => /^th(-|_)/i.test(voice.lang)) || null;
-        window.speechSynthesis.speak(utterance);
-      }
-
-      function renderResults() {
-        const list = state.filter === "favorites" ? state.visibleWords.filter(isFavorite) : state.visibleWords;
-        $("resultCount").textContent = `${list.length.toLocaleString("zh-CN")} 条`;
-        $("results").replaceChildren();
-        if (!list.length) { const empty = document.createElement("div"); empty.className = "empty"; empty.textContent = state.filter === "favorites" ? "还没有收藏词条" : "没有找到匹配词条"; $("results").append(empty); return; }
-        list.forEach((word) => {
-          const button = document.createElement("button"); button.className = `result${selected()?.id === word.id ? " selected" : ""}`; button.type = "button";
-          const copy = document.createElement("span"); const thai = document.createElement("span"); thai.className = "result-thai"; thai.textContent = word.thai; const zh = document.createElement("span"); zh.className = "result-zh"; zh.textContent = word.chinese; copy.append(thai, zh);
-          const star = document.createElement("span"); star.className = `result-star${isFavorite(word) ? " faved" : ""}`; star.textContent = isFavorite(word) ? "★" : "☆"; button.append(copy, star);
-          button.addEventListener("click", () => { state.userInteracted = true; state.deck = [word]; state.index = 0; state.showTranslation = true; renderCard(true); renderResults(); });
-          $("results").append(button);
-        });
-      }
-      function renderCard(shouldSpeak = false) {
-        const word = selected();
-        $("progress").textContent = word ? `${state.index + 1} / ${state.deck.length}` : "0 / 0";
-        $("cardThai").textContent = word?.thai || "准备好了";
-        $("cardZh").textContent = word && state.showTranslation ? word.chinese : (word ? "••••••" : "点击“播放”听发音");
-        $("cardHint").textContent = word && !state.showTranslation ? "先猜中文，再点眼睛查看答案" : (word ? "这张卡已经显示答案" : "点击“开始抽卡练习”获取词汇");
-        $("favoriteBtn").textContent = isFavorite(word) ? "★" : "☆";
-        $("favoriteBtn").classList.toggle("active", isFavorite(word));
-        $("prevBtn").disabled = !word || state.index <= 0;
-        $("nextBtn").disabled = !word || state.index >= state.deck.length - 1;
-        if (shouldSpeak && state.autoSpeak && state.userInteracted && word) speak(word.thai);
-      }
-      function setWords(words, mode = "dictionary") {
-        state.visibleWords = Array.isArray(words) ? words : [];
-        if (mode === "practice") { state.deck = state.visibleWords; state.index = 0; state.showTranslation = false; $("studyTitle").textContent = "抽卡练习"; }
-        else if (!state.deck.length && state.visibleWords.length) { state.deck = [state.visibleWords[0]]; state.index = 0; }
-        renderResults(); renderCard(false);
-      }
-      async function search(query) {
-        try { const data = extractData(await callTool("search", { query })); state.filter = "all"; document.querySelectorAll(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.filter === "all")); setWords(data.words || []); } catch (error) { $("resultCount").textContent = "搜索失败"; }
-      }
-      async function practice() {
-        state.userInteracted = true;
-        try { const data = extractData(await callTool("draw_cards", { count: 5 })); if (data.count) state.totalCount = data.count; setWords(data.words || [], "practice"); updateStats(); renderCard(true); } catch (_) { }
-      }
-      function toggleFavorite() { const word = selected(); if (!word) return; if (state.favorites.has(word.id)) state.favorites.delete(word.id); else state.favorites.add(word.id); saveState(); updateStats(); renderCard(false); renderResults(); }
-
-      $("autoSpeak").checked = state.autoSpeak;
-      $("searchForm").addEventListener("submit", (event) => { event.preventDefault(); state.userInteracted = true; search($("searchInput").value.trim()); });
-      $("practiceBtn").addEventListener("click", practice);
-      $("favoritesBtn").addEventListener("click", () => { state.filter = "favorites"; state.visibleWords = state.allWords; document.querySelectorAll(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.filter === "favorites")); renderResults(); });
-      document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click", () => { state.filter = tab.dataset.filter; document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab)); if (state.filter === "all" && !state.visibleWords.length) state.visibleWords = state.allWords; renderResults(); }));
-      $("speakBtn").addEventListener("click", () => { state.userInteracted = true; speak(selected()?.thai); });
-      $("favoriteBtn").addEventListener("click", toggleFavorite);
-      $("revealBtn").addEventListener("click", () => { state.showTranslation = !state.showTranslation; renderCard(false); });
-      $("prevBtn").addEventListener("click", () => { if (state.index > 0) { state.userInteracted = true; state.index -= 1; state.showTranslation = false; renderCard(true); renderResults(); } });
-      $("nextBtn").addEventListener("click", () => { if (state.index < state.deck.length - 1) { state.userInteracted = true; state.index += 1; state.showTranslation = false; renderCard(true); renderResults(); } });
-      $("autoSpeak").addEventListener("change", (event) => { state.autoSpeak = event.target.checked; saveState(); if (state.autoSpeak && selected()) speak(selected().thai); });
-      if ("speechSynthesis" in window) { loadVoices(); window.speechSynthesis.addEventListener("voiceschanged", loadVoices); }
-
-      async function boot() {
-        const embedded = extractData(window.openai?.toolOutput);
-        if (Array.isArray(embedded.words) && embedded.words.length) { state.totalCount = embedded.count || embedded.words.length; state.allWords = embedded.words; setWords(embedded.words, embedded.mode); updateStats(); return; }
-        try { const data = await callTool("open_vocabulary_app", {}); const payload = extractData(data); state.totalCount = payload.count || (payload.words || []).length; state.allWords = payload.words || []; setWords(payload.words || []); updateStats(); } catch (_) { try { const data = await fetch("/api/deck?count=12").then((r) => r.json()); state.totalCount = data.count || (data.words || []).length; state.allWords = data.words || []; setWords(data.words || []); updateStats(); } catch (error) { $("resultCount").textContent = "无法加载词库"; } }
-      }
-      boot();
-    })();
   </script>
 </body>
 </html>

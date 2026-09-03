@@ -12,7 +12,7 @@
       color: #111;
       font: 16px/1.5 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
     }
-    main { max-width: 900px; margin: 0 auto; }
+    main { max-width: 900px; margin: 0 auto; padding-bottom: 16px; }
     .row {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 32px;
@@ -22,7 +22,7 @@
       padding: 9px 14px;
       border-bottom: 1px solid #eee;
     }
-    .thai, .speak {
+    .row, .thai, .speak {
       appearance: none;
       border: 0;
       background: transparent;
@@ -30,19 +30,69 @@
       font: inherit;
       padding: 0;
       cursor: pointer;
+      touch-action: manipulation;
     }
     .thai { text-align: left; word-break: break-word; }
     .chinese { color: #444; word-break: break-word; }
     .speak { font-size: 15px; text-align: center; }
+    .analysis {
+      position: fixed;
+      inset: auto 0 0 0;
+      max-height: 45vh;
+      overflow: auto;
+      background: #101515;
+      color: #fff;
+      padding: 14px 18px 18px;
+      box-shadow: 0 -8px 24px rgb(0 0 0 / 18%);
+      z-index: 10;
+    }
+    .analysis[hidden] { display: none; }
+    .analysis-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .analysis-title { margin: 0; font-size: 16px; font-weight: 600; }
+    .analysis-close {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 4px;
+      background: #263131;
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .analysis-body { margin: 0; white-space: pre-wrap; font-size: 15px; }
     @media (max-width: 560px) {
       body { font-size: 15px; }
       .row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 28px; gap: 9px; padding: 9px 10px; }
+      .analysis { padding: 12px 12px 14px; }
     }
   </style>
 </head>
 <body>
   <main id="list"></main>
+  <section id="analysis-panel" class="analysis" hidden aria-live="polite">
+    <div class="analysis-head">
+      <h2 class="analysis-title">逐字解析</h2>
+      <button id="analysis-close" class="analysis-close" type="button" aria-label="关闭解析">×</button>
+    </div>
+    <p id="analysis-body" class="analysis-body"></p>
+  </section>
   <script>
+    const endpoint = "https://volubilis-deepseek-proxy.volubilis-deepseek-proxy.workers.dev/chat";
+    const analysisPanel = document.querySelector("#analysis-panel");
+    const analysisBody = document.querySelector("#analysis-body");
+    const analysisClose = document.querySelector("#analysis-close");
+    let speechTimer;
+    let tapTimer;
+    let lastTap;
+    let requestController;
+
     const speak = (text) => {
       if (!window.speechSynthesis) return;
       window.speechSynthesis.cancel();
@@ -52,6 +102,73 @@
       if (voice) utterance.voice = voice;
       window.speechSynthesis.speak(utterance);
     };
+
+    const showAnalysis = () => {
+      analysisPanel.hidden = false;
+      analysisPanel.scrollTop = 0;
+    };
+
+    const closeAnalysis = () => {
+      analysisPanel.hidden = true;
+      if (requestController) requestController.abort();
+      requestController = null;
+    };
+
+    const analyze = async (word) => {
+      if (requestController) requestController.abort();
+      requestController = new AbortController();
+      showAnalysis();
+      analysisBody.textContent = "解析中…";
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ word: { thai: word.thai, chinese: word.chinese } }),
+          signal: requestController.signal,
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok || !data || !data.answer) {
+          throw new Error(data?.error || "DeepSeek 暂时无法回答");
+        }
+        analysisBody.textContent = data.answer;
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          analysisBody.textContent = error.message || "暂时无法解析，请稍后再试。";
+        }
+      } finally {
+        requestController = null;
+      }
+    };
+
+    const handleWordClick = (word, event) => {
+      if (event.detail === 1) {
+        clearTimeout(speechTimer);
+        speechTimer = setTimeout(() => speak(word.thai), 220);
+      } else {
+        clearTimeout(speechTimer);
+      }
+    };
+
+    const handleTouch = (word, event) => {
+      if (event.target.closest(".speak") || !event.changedTouches.length) return;
+      event.preventDefault();
+      const now = Date.now();
+      if (lastTap && lastTap.word === word && now - lastTap.time < 350) {
+        clearTimeout(speechTimer);
+        clearTimeout(tapTimer);
+        lastTap = null;
+        analyze(word);
+        return;
+      }
+      clearTimeout(tapTimer);
+      lastTap = { word, time: now };
+      tapTimer = setTimeout(() => {
+        if (lastTap?.word === word) speak(word.thai);
+        lastTap = null;
+      }, 350);
+    };
+
+    analysisClose.addEventListener("click", closeAnalysis);
 
     fetch("words.json")
       .then((response) => response.json())
@@ -65,8 +182,8 @@
           thai.className = "thai";
           thai.type = "button";
           thai.textContent = word.thai;
-          thai.setAttribute("aria-label", `朗读 ${word.thai}`);
-          thai.addEventListener("click", () => speak(word.thai));
+          thai.setAttribute("aria-label", `朗读并双击解析 ${word.thai}`);
+          thai.addEventListener("click", (event) => handleWordClick(word, event));
 
           const chinese = document.createElement("span");
           chinese.className = "chinese";
@@ -77,9 +194,18 @@
           audio.type = "button";
           audio.textContent = "🔊";
           audio.setAttribute("aria-label", `朗读 ${word.thai}`);
-          audio.addEventListener("click", () => speak(word.thai));
+          audio.addEventListener("click", (event) => {
+            event.stopPropagation();
+            speak(word.thai);
+          });
 
           row.append(thai, chinese, audio);
+          row.addEventListener("touchend", (event) => handleTouch(word, event), { passive: false });
+          row.addEventListener("dblclick", (event) => {
+            event.preventDefault();
+            clearTimeout(speechTimer);
+            analyze(word);
+          });
           fragment.append(row);
         }
         document.querySelector("#list").append(fragment);

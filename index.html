@@ -15,14 +15,14 @@
     main { max-width: 900px; margin: 0 auto; padding-bottom: 16px; }
     .row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 32px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 16px;
       align-items: center;
       min-height: 50px;
       padding: 9px 14px;
       border-bottom: 1px solid #eee;
     }
-    .row, .thai, .speak {
+    .row, .thai {
       appearance: none;
       border: 0;
       background: transparent;
@@ -34,7 +34,6 @@
     }
     .thai { text-align: left; word-break: break-word; }
     .chinese { color: #444; word-break: break-word; }
-    .speak { font-size: 15px; text-align: center; }
     .analysis {
       position: fixed;
       inset: auto 0 0 0;
@@ -69,7 +68,7 @@
     .analysis-body { margin: 0; white-space: pre-wrap; font-size: 15px; }
     @media (max-width: 560px) {
       body { font-size: 15px; }
-      .row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 28px; gap: 9px; padding: 9px 10px; }
+      .row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 9px; padding: 9px 10px; }
       .analysis { padding: 12px 12px 14px; }
     }
   </style>
@@ -150,7 +149,7 @@
     };
 
     const handleTouch = (word, event) => {
-      if (event.target.closest(".speak") || !event.changedTouches.length) return;
+      if (!event.changedTouches.length) return;
       event.preventDefault();
       const now = Date.now();
       if (lastTap && lastTap.word === word && now - lastTap.time < 350) {
@@ -183,23 +182,13 @@
           thai.type = "button";
           thai.textContent = word.thai;
           thai.setAttribute("aria-label", `朗读并双击解析 ${word.thai}`);
-          thai.addEventListener("click", (event) => handleWordClick(word, event));
 
           const chinese = document.createElement("span");
           chinese.className = "chinese";
           chinese.textContent = word.chinese;
 
-          const audio = document.createElement("button");
-          audio.className = "speak";
-          audio.type = "button";
-          audio.textContent = "🔊";
-          audio.setAttribute("aria-label", `朗读 ${word.thai}`);
-          audio.addEventListener("click", (event) => {
-            event.stopPropagation();
-            speak(word.thai);
-          });
-
-          row.append(thai, chinese, audio);
+          row.append(thai, chinese);
+          row.addEventListener("click", (event) => handleWordClick(word, event));
           row.addEventListener("touchend", (event) => handleTouch(word, event), { passive: false });
           row.addEventListener("dblclick", (event) => {
             event.preventDefault();
